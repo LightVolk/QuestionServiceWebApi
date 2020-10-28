@@ -12,18 +12,22 @@ namespace QuestionServiceWebApi.Db
     public class ApplicationContext : DbContext
     {
         public DbSet<Question> Questions { get; set; }
-        private string _questionServiceConnectionString { get; set; }
 
-        public ApplicationContext(IConfiguration configuration,string secretKey)
+        public DbSet<Tag> Tags { get; set; }
+      
+
+        public ApplicationContext(DbContextOptions<ApplicationContext> options)
+        : base(options)
         {
-            Database.EnsureCreated();
-            _questionServiceConnectionString = configuration["ConnectionStrings:Questions"];
-            _questionServiceConnectionString = $"{_questionServiceConnectionString}Password:{secretKey}";
+            Database.EnsureCreated();           
+        }
+
+        public ApplicationContext()
+        {
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseNpgsql($"{_questionServiceConnectionString}");
+        {         
             Log.Information("OnConfigure finish");
         }
     }
