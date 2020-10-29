@@ -11,8 +11,8 @@ using QuestionServiceWebApi.Db;
 namespace QuestionServiceWebApi.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20201028195339_Initial")]
-    partial class Initial
+    [Migration("20201029182606_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

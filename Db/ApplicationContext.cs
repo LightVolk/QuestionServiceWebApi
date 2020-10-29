@@ -19,7 +19,7 @@ namespace QuestionServiceWebApi.Db
         public ApplicationContext(DbContextOptions<ApplicationContext> options)
         : base(options)
         {
-            Database.EnsureCreated();           
+          
         }
 
         public ApplicationContext()
