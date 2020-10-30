@@ -35,7 +35,7 @@ namespace QuestionServiceWebApi.Models
         /// </summary>
         public int Id { get; set; }
         public List<string> tags { get; set; }
-        public Owner owner { get; set; }
+        public Owner Owner { get; set; }
         public bool is_answered { get; set; }
         public int view_count { get; set; }
         public int answer_count { get; set; }

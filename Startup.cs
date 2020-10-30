@@ -49,7 +49,12 @@ namespace QuestionServiceWebApi
             //services.AddSingleton<ITagUpdaterService, TagUpdaterService>(options=>new TagUpdaterService(60*1000*5, tags));
 
             var connectionString = Configuration["ConnectionStrings:Questions"];
-            services.AddDbContext<ApplicationContext>(options=>options.UseNpgsql(connectionString));
+            var optionsBuilder = new DbContextOptionsBuilder<ApplicationContext>();
+            optionsBuilder.UseNpgsql(connectionString);
+            services.AddHostedService<TagUpdaterService>(options=> new TagUpdaterService(60*1000*5,tags,optionsBuilder.Options));
+
+            
+            //services.AddDbContext<ApplicationContext>(options=>options.UseNpgsql(connectionString));
 
             Log.Logger = new LoggerConfiguration()
                  .WriteTo.Console(Serilog.Events.LogEventLevel.Debug)

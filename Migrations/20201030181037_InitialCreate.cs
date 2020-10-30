@@ -47,7 +47,7 @@ namespace QuestionServiceWebApi.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     tags = table.Column<List<string>>(nullable: true),
-                    ownerId = table.Column<int>(nullable: true),
+                    OwnerId = table.Column<int>(nullable: true),
                     is_answered = table.Column<bool>(nullable: false),
                     view_count = table.Column<int>(nullable: false),
                     answer_count = table.Column<int>(nullable: false),
@@ -68,17 +68,17 @@ namespace QuestionServiceWebApi.Migrations
                 {
                     table.PrimaryKey("PK_Questions", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Questions_Owner_ownerId",
-                        column: x => x.ownerId,
+                        name: "FK_Questions_Owner_OwnerId",
+                        column: x => x.OwnerId,
                         principalTable: "Owner",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Questions_ownerId",
+                name: "IX_Questions_OwnerId",
                 table: "Questions",
-                column: "ownerId");
+                column: "OwnerId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

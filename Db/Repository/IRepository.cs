@@ -13,4 +13,4 @@ namespace QuestionServiceWebApi.Db.Repository
         Task<T> Update(T entity);
         Task<T> Delete(int id);
     }
-}
+} 

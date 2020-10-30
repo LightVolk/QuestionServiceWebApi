@@ -11,7 +11,7 @@ using QuestionServiceWebApi.Db;
 namespace QuestionServiceWebApi.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20201029182606_InitialCreate")]
+    [Migration("20201030181037_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -62,6 +62,9 @@ namespace QuestionServiceWebApi.Migrations
                         .HasColumnType("integer")
                         .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn);
 
+                    b.Property<int?>("OwnerId")
+                        .HasColumnType("integer");
+
                     b.Property<int>("answer_count")
                         .HasColumnType("integer");
 
@@ -95,9 +98,6 @@ namespace QuestionServiceWebApi.Migrations
                     b.Property<string>("link")
                         .HasColumnType("text");
 
-                    b.Property<int?>("ownerId")
-                        .HasColumnType("integer");
-
                     b.Property<int>("question_id")
                         .HasColumnType("integer");
 
@@ -115,7 +115,7 @@ namespace QuestionServiceWebApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ownerId");
+                    b.HasIndex("OwnerId");
 
                     b.ToTable("Questions");
                 });
@@ -137,9 +137,9 @@ namespace QuestionServiceWebApi.Migrations
 
             modelBuilder.Entity("QuestionServiceWebApi.Models.Question", b =>
                 {
-                    b.HasOne("QuestionServiceWebApi.Models.Owner", "owner")
+                    b.HasOne("QuestionServiceWebApi.Models.Owner", "Owner")
                         .WithMany()
-                        .HasForeignKey("ownerId");
+                        .HasForeignKey("OwnerId");
                 });
 #pragma warning restore 612, 618
         }

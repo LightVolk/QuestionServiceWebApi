@@ -22,9 +22,9 @@ namespace QuestionServiceWebApi.Db
           
         }
 
-        public ApplicationContext()
-        {
-        }
+        //public ApplicationContext()
+        //{
+        //}
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {         
