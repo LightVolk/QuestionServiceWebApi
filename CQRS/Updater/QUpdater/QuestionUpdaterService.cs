@@ -2,8 +2,6 @@
 using Microsoft.Extensions.Hosting;
 using QuestionServiceWebApi.Controllers.Infrastructure;
 using QuestionServiceWebApi.Db;
-using QuestionServiceWebApi.Db.Repository;
-using QuestionServiceWebApi.Infrastructure;
 using QuestionServiceWebApi.Models;
 using Serilog;
 using Serilog.Events;
@@ -13,33 +11,23 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace QuestionServiceWebApi.CQRS.Updater
+namespace QuestionServiceWebApi.CQRS.Updater.QUpdater
 {
-    /// <summary>
-    /// Сервис обновления тегов
-    /// </summary>
-    public class TagUpdaterService : IHostedService
+    public class QuestionUpdaterService : IHostedService, IQuestionUpdaterService
     {
         private int _updateTime;
-        private IEnumerable<string> _tags;
-        private Timer _timer;
         private DbContextOptions<ApplicationContext> _options;
-       
-        //private EfCoreTagRepository _tagRepository;
-        public TagUpdaterService(int updateTimeMilliseconds, IEnumerable<string> tags/*, EfCoreTagRepository efCoreTagRepository*/, DbContextOptions<ApplicationContext> options)
+        private Timer _timer;
+        private IQuestionService _questionService;
+        public QuestionUpdaterService(int updateTimeMilliseconds, DbContextOptions<ApplicationContext> options, IQuestionService questionService)
         {
             _updateTime = updateTimeMilliseconds;
-            _tags = tags;
             _options = options;
-           
-            //_tagRepository = efCoreTagRepository;
+            _questionService = questionService;
         }
-
-
-
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            _timer = new Timer(StartInternal, null, 0, _updateTime);            
+            _timer = new Timer(StartInternal, null, 0, _updateTime);
             return Task.CompletedTask;
         }
 
@@ -55,15 +43,44 @@ namespace QuestionServiceWebApi.CQRS.Updater
             _timer?.Change(Timeout.Infinite, 0);
             using var context = new ApplicationContext(_options);
 
-            foreach (var tag in _tags)
+            var qs = new HashSet<Question>();
+            var tags = context.Tags.ToList();
+            foreach (var tag in tags)
             {
-                if (!context.Tags.Any(x => x.Name == tag))
+                var searchResult = _questionService.GetQuestionsAsync(tag.Name).Result;
+                if(searchResult.items!=null)
+                    qs.UnionWith(searchResult.items);                
+            }
+
+            var titles = qs.Select(x => x.title);
+            var updatedQuestions = context.Questions.Where(x =>titles.Equals(x.title)).AsQueryable().ToList();
+            var insertedQuestions = new HashSet<Question>();
+
+            foreach(var t in titles)
+            {
+                var q = context.Questions.FirstOrDefault(x => x.title.Equals(t));
+                if (q!=null)
                 {
-                    context.Tags.AddAsync(new Models.Tag() { Name = tag });
+                    insertedQuestions.Add(q);
                 }
             }
 
+            foreach(var q in context.Questions)
+            {               
+                foreach(var t in titles)
+                {
+                    if (q.title.Equals(t))
+                    {
+                        updatedQuestions.Add(q);                       
+                    }
+                }             
+            }
+            
+
+            context.Questions.AddRange(insertedQuestions);
+            context.Questions.UpdateRange(updatedQuestions);
             context.SaveChanges();
+
 
 
 
@@ -102,9 +119,10 @@ namespace QuestionServiceWebApi.CQRS.Updater
 
             _timer?.Change(5 * 1000 * 60, 0);
         }
+
         private Task StopInternal()
         {
-            Log.Write(Serilog.Events.LogEventLevel.Information, "Timed Background Service Tags Updater is stopping.");
+            Log.Write(Serilog.Events.LogEventLevel.Information, "Timed Background Service Question Updater is stopping.");
             _timer?.Change(Timeout.Infinite, 0);
             return Task.CompletedTask;
         }
@@ -113,6 +131,5 @@ namespace QuestionServiceWebApi.CQRS.Updater
         {
             _timer?.Dispose();
         }
-
     }
 }

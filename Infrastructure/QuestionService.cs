@@ -11,16 +11,16 @@ namespace QuestionServiceWebApi.Controllers.Infrastructure
     /// <summary>
     /// Сервис вопросов по SO
     /// </summary>
-    public class QuestionService
+    public class QuestionService : IQuestionService
     {
-       
+
         private RestClient _restclient;
         /// <summary>
         /// конструктор
         /// </summary>     
         public QuestionService()
-        {           
-            _restclient= new RestClient("http://api.stackexchange.com/2.2/");
+        {
+            _restclient = new RestClient("http://api.stackexchange.com/2.2/");
         }
 
         /// <summary>
@@ -29,8 +29,8 @@ namespace QuestionServiceWebApi.Controllers.Infrastructure
         /// </summary>
         /// <returns>объект-хранилище со списком тем</returns>
         public async Task<Search> GetQuestionsAsync(string tag)
-        {            
-            var request = new RestRequest($"search/advanced?order=desc&sort=activity&accepted=False&tagged={tag}&site=stackoverflow", Method.GET);         
+        {
+            var request = new RestRequest($"search/advanced?order=desc&sort=activity&accepted=False&tagged={tag}&site=stackoverflow", Method.GET);
             request.OnBeforeDeserialization = resp => { resp.ContentType = "application/json"; };
             var queryResult = _restclient.Execute<Search>(request);
 

@@ -9,6 +9,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using QuestionServiceWebApi.Controllers.Infrastructure;
 using QuestionServiceWebApi.CQRS.Updater;
+using QuestionServiceWebApi.CQRS.Updater.QUpdater;
 using QuestionServiceWebApi.Db;
 using QuestionServiceWebApi.Db.Repository;
 using Serilog;
@@ -39,11 +40,11 @@ namespace QuestionServiceWebApi
             
             services.AddAuthorization();
             services.AddControllers();
-            services.AddHttpClient();
-            services.AddSingleton<QuestionService>();
+            services.AddHttpClient();            
             services.AddSingleton<App>();
             services.AddScoped<EfCoreTagRepository>();
             services.AddAuthentication();
+            services.AddSingleton<IQuestionService, QuestionService>();
 
             var tags = Configuration.GetSection("Tags").AsEnumerable().Where(x=>x.Value!=null).Select(x=>x.Value);
             //services.AddSingleton<ITagUpdaterService, TagUpdaterService>(options=>new TagUpdaterService(60*1000*5, tags));
@@ -52,6 +53,7 @@ namespace QuestionServiceWebApi
             var optionsBuilder = new DbContextOptionsBuilder<ApplicationContext>();
             optionsBuilder.UseNpgsql(connectionString);
             services.AddHostedService<TagUpdaterService>(options=> new TagUpdaterService(60*1000*5,tags,optionsBuilder.Options));
+            services.AddHostedService<QuestionUpdaterService>(options => new QuestionUpdaterService(60 * 1000 * 1, optionsBuilder.Options, options.GetService<IQuestionService>()));
 
             
             //services.AddDbContext<ApplicationContext>(options=>options.UseNpgsql(connectionString));
@@ -63,15 +65,11 @@ namespace QuestionServiceWebApi
                  .CreateLogger();
 
             
-            //services.AddSingleton<ApplicationContext>(x => new ApplicationContext(Configuration,_questionPostgresSecret));
+          
 
-            //var builder = new SqlConnectionStringBuilder(
-            //Configuration.GetConnectionString("PostgresPassword"));
-            //builder.Password = Configuration["DbPassword"];
-
-            IServiceProvider serviceProvider = services.BuildServiceProvider();
-            var qService = serviceProvider.GetRequiredService<QuestionService>();
-            var ss = serviceProvider.GetService<App>().RunAsync(qService).Result;
+            //IServiceProvider serviceProvider = services.BuildServiceProvider();
+            //var qService = serviceProvider.GetRequiredService<QuestionService>();
+            //var ss = serviceProvider.GetService<App>().RunAsync(qService).Result;
         }
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
