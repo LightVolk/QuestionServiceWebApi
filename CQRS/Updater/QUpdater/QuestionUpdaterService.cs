@@ -82,41 +82,6 @@ namespace QuestionServiceWebApi.CQRS.Updater.QUpdater
             context.SaveChanges();
 
 
-
-
-
-            //var updates = new List<Question>();
-
-            //Dictionary<string, List<Question>> tagToQuestions = new Dictionary<string, List<Question>>();
-            //foreach (var tag in context.Tags)
-            //{
-            //    var searchResult = _questionService.GetQuestionsAsync(tag.Name).Result;
-            //    if (searchResult.items != null && searchResult.items.Any())
-            //    {
-            //        updates.AddRange(searchResult.items);
-
-            //        if (!tagToQuestions.ContainsKey(tag.Name))
-            //            tagToQuestions.Add(tag.Name, updates);
-            //        else
-            //            tagToQuestions[tag.Name].AddRange(updates);
-            //    }
-            //}
-
-            //foreach (var tag in tagToQuestions.Keys)
-            //{
-            //    //context.Questions.AttachRange(tagToQuestions[tag]);
-            //    var questions = tagToQuestions[tag];
-            //    foreach(var q in questions)
-            //    {
-            //        if(context.Questions.Contains(q))
-            //    }
-            //    context.Questions.UpdateRange(tagToQuestions[tag]);
-            //    context.SaveChanges();
-
-            //}
-
-
-
             _timer?.Change(5 * 1000 * 60, 0);
         }
 

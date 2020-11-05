@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 namespace QuestionServiceWebApi.Db.Repository
 {
     public abstract class EfCoreRepository<TEntity, TContext> : IRepository<TEntity>
-         where TEntity : class, IEntity
-         where TContext : DbContext
+        where TEntity : class, IEntity
+        where TContext : DbContext
     {
         private readonly TContext context;
         public EfCoreRepository(TContext context)

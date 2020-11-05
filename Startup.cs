@@ -1,3 +1,4 @@
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -17,7 +18,9 @@ using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
+using QuestionServiceWebApi.CQRS.Queries;
 
 namespace QuestionServiceWebApi
 {
@@ -43,8 +46,15 @@ namespace QuestionServiceWebApi
             services.AddHttpClient();            
             services.AddSingleton<App>();
             services.AddScoped<EfCoreTagRepository>();
+            services.AddScoped<EfCoreQuestionsRepository>();
             services.AddAuthentication();
             services.AddSingleton<IQuestionService, QuestionService>();
+            services.AddMediatR(typeof(Startup),typeof(GetQuestionsQuery));
+           
+            // Register the Swagger services
+            services.AddSwaggerDocument();
+
+
 
             var tags = Configuration.GetSection("Tags").AsEnumerable().Where(x=>x.Value!=null).Select(x=>x.Value);
             //services.AddSingleton<ITagUpdaterService, TagUpdaterService>(options=>new TagUpdaterService(60*1000*5, tags));
@@ -78,8 +88,9 @@ namespace QuestionServiceWebApi
             {
                 app.UseDeveloperExceptionPage();
             }
-
-           // app.UseHttpsRedirection();
+           
+         
+            // app.UseHttpsRedirection();
 
             app.UseRouting();
 
@@ -90,7 +101,9 @@ namespace QuestionServiceWebApi
                 endpoints.MapControllers();
             });
 
-
+            // Register the Swagger generator and the Swagger UI middlewares
+            app.UseOpenApi();
+            app.UseSwaggerUi3();
         }
     }
 }
