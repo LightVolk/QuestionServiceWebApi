@@ -20,6 +20,7 @@ namespace QuestionServiceWebApi.Db
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {         
+            
             Log.Information("OnConfigure finish");
         }
     }

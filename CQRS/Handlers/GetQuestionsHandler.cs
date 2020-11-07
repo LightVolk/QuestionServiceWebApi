@@ -21,6 +21,7 @@ namespace QuestionServiceWebApi.CQRS.Handlers
         public Task<IAsyncEnumerable<Question>> Handle(GetQuestionsQuery request, CancellationToken cancellationToken)
         {
             var questions = _questionsRepository.GetQuestions(request.Tag);
+           // return questions;
             return Task.FromResult(questions);
         }
 

@@ -22,6 +22,9 @@ using System.Reflection;
 using System.Threading.Tasks;
 using QuestionServiceWebApi.CQRS.Queries;
 using QuestionServiceWebApi.Models;
+using Serilog.Events;
+using ILogger = Microsoft.Extensions.Logging.ILogger;
+using QuestionServiceWebApi.Infrastructure.LoggerInfrastructure;
 
 namespace QuestionServiceWebApi
 {
@@ -34,6 +37,11 @@ namespace QuestionServiceWebApi
         }
 
         public IConfiguration Configuration { get; }
+    
+        public static readonly ILoggerFactory EfCoreLoggerFactory = LoggerFactory.Create(builer =>
+        {
+            builer.AddProvider(new EfCoreLoggerProvider());
+        });
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -64,12 +72,20 @@ namespace QuestionServiceWebApi
 
             var connectionString = Configuration["ConnectionStrings:Questions"];
             var optionsBuilder = new DbContextOptionsBuilder<ApplicationContext>();
+            optionsBuilder.UseLoggerFactory(EfCoreLoggerFactory);
+         //   optionsBuilder.UseLazyLoadingProxies();
             optionsBuilder.UseNpgsql(connectionString);
-            services.AddHostedService<TagUpdaterService>(options=> new TagUpdaterService(60*1000*5,tags,optionsBuilder.Options));
-            services.AddHostedService<QuestionUpdaterService>(options => new QuestionUpdaterService(60 * 1000 * 1, optionsBuilder.Options, options.GetService<IQuestionService>()));
+
+
+            // ON on production. Off when debugging sql queries
+            //services.AddHostedService<TagUpdaterService>(options=> new TagUpdaterService(60*1000*5,tags,optionsBuilder.Options));
+            //services.AddHostedService<QuestionUpdaterService>(options => new QuestionUpdaterService(60 * 1000 * 1, optionsBuilder.Options, options.GetService<IQuestionService>()));
+           
+            
+            //services.AddDbContext<ApplicationContext>(options=>options.UseNpgsql(connectionString));
 
             services.AddScoped<DbContextOptions<ApplicationContext>>(x=> optionsBuilder.Options);
-            //services.AddDbContext<ApplicationContext>(options=>options.UseNpgsql(connectionString));
+           
             services.AddMediatR(typeof(Startup));
             services.AddMediatR(typeof(Question));
             services.AddMediatR(typeof(IAsyncEnumerable<Question>));
