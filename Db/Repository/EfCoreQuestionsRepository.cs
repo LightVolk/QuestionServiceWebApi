@@ -17,22 +17,23 @@ namespace QuestionServiceWebApi.Db.Repository
             _context = context;
         }
 
-        public IAsyncEnumerable<Question> GetQuestions(string tag)
+        public List<Question> GetQuestions(string tag)
         {
-            //var qResult = new List<Question>();
-            //var quests = _context.Questions.AsQueryable();
-            //foreach (var q in quests)
-            //{
-            //    if(q.tags.Contains(tag))
-            //        qResult.Add(q);
-            //}
+            var qResult = new List<Question>();
+            var quests = _context.Questions.AsQueryable();
+            foreach (var q in quests)
+            {
+                if (q.tags.Contains(tag))
+                    qResult.Add(q);
+            }
 
-          //  var qss = _context.Questions.Where(question => question.tags.Contains(tag)).Include(question => question.tags);
-            var questions = _context.Questions.Where(question => question.tags.Contains(tag)==true).AsQueryable();
-            return questions.AsAsyncEnumerable();
+            return qResult;
 
-          //  return  qss.AsQueryable().AsAsyncEnumerable();
-            
+            //  var qss = _context.Questions.Where(question => question.tags.Contains(tag)).Include(question => question.tags);//var questions = _context.Questions.Where(question => question.tags.Contains(tag)==true).AsQueryable();
+            //return questions.AsAsyncEnumerable();
+
+            //  return  qss.AsQueryable().AsAsyncEnumerable();
+
         }
 
         // asp.net-core

@@ -7,7 +7,7 @@ using QuestionServiceWebApi.Models;
 
 namespace QuestionServiceWebApi.CQRS.Queries
 {
-    public class GetQuestionsQuery: IRequest<IAsyncEnumerable<Question>>
+    public class GetQuestionsQuery: IRequest<List<Question>>
     {
         public string Tag { get; }
 

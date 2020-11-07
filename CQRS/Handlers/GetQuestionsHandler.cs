@@ -10,7 +10,7 @@ using QuestionServiceWebApi.Models;
 
 namespace QuestionServiceWebApi.CQRS.Handlers
 {
-    public class GetQuestionsHandler: IRequestHandler<GetQuestionsQuery, IAsyncEnumerable<Question>>
+    public class GetQuestionsHandler: IRequestHandler<GetQuestionsQuery, List<Question>>
     {
         private readonly EfCoreQuestionsRepository _questionsRepository;
 
@@ -18,7 +18,7 @@ namespace QuestionServiceWebApi.CQRS.Handlers
         {
             _questionsRepository = questionsRepository;
         }
-        public Task<IAsyncEnumerable<Question>> Handle(GetQuestionsQuery request, CancellationToken cancellationToken)
+        public Task<List<Question>> Handle(GetQuestionsQuery request, CancellationToken cancellationToken)
         {
             var questions = _questionsRepository.GetQuestions(request.Tag);
            // return questions;
