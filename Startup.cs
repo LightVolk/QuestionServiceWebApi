@@ -21,6 +21,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using QuestionServiceWebApi.CQRS.Queries;
+using QuestionServiceWebApi.Models;
 
 namespace QuestionServiceWebApi
 {
@@ -49,8 +50,10 @@ namespace QuestionServiceWebApi
             services.AddScoped<EfCoreQuestionsRepository>();
             services.AddAuthentication();
             services.AddSingleton<IQuestionService, QuestionService>();
-            services.AddMediatR(typeof(Startup),typeof(GetQuestionsQuery));
+            services.AddScoped<ApplicationContext>();
            
+           
+            //EfCoreTagRepository tagRepository, EfCoreQuestionsRepository questionsRepository
             // Register the Swagger services
             services.AddSwaggerDocument();
 
@@ -65,8 +68,21 @@ namespace QuestionServiceWebApi
             services.AddHostedService<TagUpdaterService>(options=> new TagUpdaterService(60*1000*5,tags,optionsBuilder.Options));
             services.AddHostedService<QuestionUpdaterService>(options => new QuestionUpdaterService(60 * 1000 * 1, optionsBuilder.Options, options.GetService<IQuestionService>()));
 
-            
+            services.AddScoped<DbContextOptions<ApplicationContext>>(x=> optionsBuilder.Options);
             //services.AddDbContext<ApplicationContext>(options=>options.UseNpgsql(connectionString));
+            services.AddMediatR(typeof(Startup));
+            services.AddMediatR(typeof(Question));
+            services.AddMediatR(typeof(IAsyncEnumerable<Question>));
+            services.AddMediatR(typeof(DbContext));
+            services.AddMediatR(typeof(DbContextOptions<ApplicationContext>));
+            services.AddMediatR(typeof(DbContextOptions));
+            services.AddMediatR(typeof(ApplicationContext));
+            services.AddMediatR(typeof(GetQuestionsQuery));
+            services.AddMediatR(typeof(EfCoreQuestionsRepository));
+            
+            
+            
+
 
             Log.Logger = new LoggerConfiguration()
                  .WriteTo.Console(Serilog.Events.LogEventLevel.Debug)
