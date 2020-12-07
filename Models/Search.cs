@@ -1,6 +1,7 @@
 ﻿using QuestionServiceWebApi.Db.Repository;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -34,7 +35,8 @@ namespace QuestionServiceWebApi.Models
         /// auto index
         /// </summary>
         public int Id { get; set; }
-        public List<string> tags { get; set; }
+        [Column("tags")]
+        public List<string> Tags { get; set; }
         public Owner Owner { get; set; }
         public bool is_answered { get; set; }
         public int view_count { get; set; }

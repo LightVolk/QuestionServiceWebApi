@@ -23,5 +23,11 @@ namespace QuestionServiceWebApi.Db
             
             Log.Information("OnConfigure finish");
         }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            //     base.OnModelCreating(modelBuilder);
+            //modelBuilder.Entity<Question>().HasIndex(q => q.Tags);
+        }
     }
 }

@@ -68,7 +68,7 @@ namespace QuestionServiceWebApi
 
 
             var tags = Configuration.GetSection("Tags").AsEnumerable().Where(x=>x.Value!=null).Select(x=>x.Value);
-            //services.AddSingleton<ITagUpdaterService, TagUpdaterService>(options=>new TagUpdaterService(60*1000*5, tags));
+            //services.AddSingleton<ITagUpdaterService, TagUpdaterService>(options=>new TagUpdaterService(60*1000*5, Tags));
 
             var connectionString = Configuration["ConnectionStrings:Questions"];
             var optionsBuilder = new DbContextOptionsBuilder<ApplicationContext>();
@@ -78,7 +78,7 @@ namespace QuestionServiceWebApi
 
 
             // ON on production. Off when debugging sql queries
-            //services.AddHostedService<TagUpdaterService>(options=> new TagUpdaterService(60*1000*5,tags,optionsBuilder.Options));
+            //services.AddHostedService<TagUpdaterService>(options=> new TagUpdaterService(60*1000*5,Tags,optionsBuilder.Options));
             //services.AddHostedService<QuestionUpdaterService>(options => new QuestionUpdaterService(60 * 1000 * 1, optionsBuilder.Options, options.GetService<IQuestionService>()));
            
             

@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using QuestionServiceWebApi.Db.Repository;
 
 
 namespace QuestionServiceWebApi
@@ -18,6 +19,10 @@ namespace QuestionServiceWebApi
     {
         public static void Main(string[] args)
         {
+            //var module = new Module();
+
+            //module.Modules.Add(new Module());
+
             CreateHostBuilder(args).Build().Run();
         }
 
